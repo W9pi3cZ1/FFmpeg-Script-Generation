@@ -27,15 +27,14 @@
     <input type="file" onchange="Process()" multiple="multiple" id="files">
     <script>
         function download(filename, text) {
+            if(document.querySelector("a") != null){
+                document.querySelector("a").remove();
+            }
             var element = document.createElement('a');
             element.innerText = "下载";
             element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
             element.setAttribute('download', filename);
             document.body.appendChild(element);
-            element.addEventListener("click",() => {
-                element.style.display = "none";
-                element.remove();
-            });
         }
 
         function Process(){
