@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFmpeg Script Generation</title>
+    <script>
+        var input;
+        var output;
+        var script = "";
+        function ProcessFile(){
+            output = document.querySelector("#output");
+            input = document.querySelector("#files").files;
+            script = "";
+            script = "@echo off\ntitle FFmpeg Script Generation\nmd output\n"
+            for (let index = 0; index < input.length; index++) {
+                const element = input[index].name;
+                script+='ffmpeg -i "'+element+'" -s 1280x720 -r 30 -fs 1024MB -preset faster "output/'+element+'"\n';
+            }
+            script += "pause\n";
+            return script;
+        }
+    </script>
+</head>
+<body>
+    <!--芝士一个ffmpeg自动脚本生成工具-->
+    <input type="file" onchange="Process()" multiple="multiple" id="files">
+    <script>
+        function download(filename, text) {
+            var element = document.createElement('a');
+            element.innerText = "下载";
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+            element.setAttribute('download', filename);
+            document.body.appendChild(element);
+        }
+
+        function Process(){
+            download("output.bat",ProcessFile());
+        }
+    </script>
+</body>
+</html>
