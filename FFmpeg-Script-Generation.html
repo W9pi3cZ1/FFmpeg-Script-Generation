@@ -4,6 +4,71 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FFmpeg Script Generation</title>
+    <style>
+        ::selection {
+            background: lime;
+            color: #000;
+        }
+        body{
+            background-color: black;
+            color: lime;
+            margin: 0;
+            text-align: center;
+        }
+        #main{
+            width: auto;
+            height: auto;
+            position: absolute;
+            left:50%;
+            top: 50%;
+            transform: translate(-50%,-50%)scale(1.25);
+            overflow: hidden;
+        }
+        input{
+            margin: 0px;
+            width:100%;
+            opacity:0;
+            cursor:pointer;
+            position:absolute;
+            border: 0;
+            z-index: 1;
+        }
+        p{
+            color: lime;
+            margin: 0;
+            width: 100%;
+            text-align: center;
+            position: absolute;
+        }
+        #file_{
+            z-index: 0;
+            position: relative;
+            color: black;
+            border: lime 0.05em solid;
+            width: calc(100% - 0.1em);
+            height: 1.5em;
+            background-color: #000;
+        }
+        #main{
+            margin: 4px;
+        }
+        textarea {
+            border:1px lime solid;
+            color: lime;
+            background-color: black;
+            outline: limegreen 1px solid;
+            resize: none;
+        }
+        button{
+            width: 100%;
+            margin-top: 8px;
+            border:1px lime solid;
+            color: lime;
+            background-color: black;
+            outline: limegreen 1px solid;
+            resize: none;
+        }
+    </style>
     <script>
         var input;
         var output;
@@ -15,31 +80,45 @@
             script = "@echo off\ntitle FFmpeg Script Generation\nmd output\n"
             for (let index = 0; index < input.length; index++) {
                 const element = input[index].name;
-                script+='ffmpeg -i "'+element+'" -s 1280x720 -r 30 -fs 1024MB -preset faster "output/'+element+'"\n';
+                //以下是对ffmpeg的一些配置，可以自行修改，如果懒得修改，就保持现状吧。
+                script+='title FFmpeg Script Generation '+index+'/'+input.length+'\nffmpeg -i "'+element+'" -s 1280x720 -r 30 -fs 1024MB -threads 16 -preset faster "output/'+element+'"\n';
             }
-            script += "pause\n";
+            script += "title FFmpeg Script Generation "+input.length+"/"+input.length+"\npause\n";
+            output.value = script;
             return script;
         }
     </script>
 </head>
 <body>
-    <!--芝士一个ffmpeg自动脚本生成工具-->
-    <input type="file" onchange="Process()" multiple="multiple" id="files">
-    <script>
-        function download(filename, text) {
-            if(document.querySelector("a") != null){
-                document.querySelector("a").remove();
+    <div id="main">
+        FFmpeg Script Generation
+        <br>
+        <!--芝士一个ffmpeg自动脚本生成工具-->
+        <div id="file_">
+            <p>上传</p>
+            <input type="file" onchange="Process()" multiple="multiple" id="files" accept="video/*">
+        </div>
+        输出:
+        <br>
+        <textarea id="output" cols="30" rows="10">请上传文件...</textarea>
+        <br>
+        <script>
+            function download(filename, text) {
+                var blob = new Blob([text],{type:"text/plain"})
+                if(document.querySelector("a") != null){
+                    document.querySelector("a").remove();
+                }
+                var element = document.createElement('a');
+                element.innerHTML = "<button>下载</button>";
+                element.setAttribute('href', window.URL.createObjectURL(blob));
+                element.setAttribute('download', filename);
+                document.querySelector("#main").appendChild(element);
             }
-            var element = document.createElement('a');
-            element.innerText = "下载";
-            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-            element.setAttribute('download', filename);
-            document.body.appendChild(element);
-        }
-
-        function Process(){
-            download("output.bat",ProcessFile());
-        }
-    </script>
+    
+            function Process(){
+                download("output.bat",ProcessFile());
+            }
+        </script>
+    </div>
 </body>
 </html>
