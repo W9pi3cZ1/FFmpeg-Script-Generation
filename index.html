@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FFmpeg Script Generation</title>
+    <title>FFmpeg Script Generation 1.1.2</title>
     <style>
         ::selection {
             background: lime;
@@ -32,6 +32,7 @@
             position:absolute;
             border: 0;
             z-index: 1;
+            left:0;
         }
         p{
             color: lime;
@@ -81,7 +82,9 @@
             for (let index = 0; index < input.length; index++) {
                 const element = input[index].name;
                 //以下是对ffmpeg的一些配置，可以自行修改，如果懒得修改，就保持现状吧。
-                script+='title FFmpeg Script Generation '+index+'/'+input.length+'\nffmpeg -i "'+element+'" -s 1280x720 -r 30 -fs 1024MB -threads 16 -preset faster "output/'+element+'"\n';
+                // script+='title FFmpeg Script Generation '+index+'/'+input.length+'\nffmpeg -i "'+element+'" -c:v libx264 -s 1280x720 -r 30 -fs 1024MB -threads 8 -preset faster "output/'+element+'"\n';
+                script+='title FFmpeg Script Generation '+index+'/'+input.length+'\nffmpeg -i "'+element+'" -minrate 2000k -bufsize 3000k -bf 16 -c:v h264_qsv -profile:v high -level 5.1 -s 1280x720 -r 30 -fs 1024MB -global_quality 20 -b:v 3000k -maxrate 3200k -threads 8 -preset slower "output/'+element+'.mp4"\n';
+
             }
             script += "title FFmpeg Script Generation "+input.length+"/"+input.length+"\npause\n";
             output.value = script;
