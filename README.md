@@ -8,5 +8,5 @@ GPU转码测试：
  border="0"
  frameborder="no" 
  framespacing="0" 
- "allowfullscreen"="true">
+ allowfullscreen="true">
 </iframe>
